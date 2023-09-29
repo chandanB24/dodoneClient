@@ -35,9 +35,8 @@ const Auth = () => {
 
 
   return (
-    <div className='container-fluid d-flex justify-content-center  align-items-center flex-column ' style={{height:'90vh'}}>
-        <div className="card rounded-lg bg-transparent border-0 p-4 mb-1 shadow-lg">
-            <h1 className="fs-1">"Welcome to Do Done Everything is Under a single tap"</h1>
+    <div className='container-fluid d-flex justify-content-center  align-items-center flex-column mt-2' style={{height:'90vh'}}>
+            <h1 className='text-center' style={{fontSize:'4rem'}}>"Welcome to Do Done Everything is Under a single tap"</h1>
             <div className='d-flex justify-content-center'>
             <GoogleOAuthProvider clientId="494372254103-gm4uqgj7on9lnn24ed3de400vqnlkuet.apps.googleusercontent.com">
             <GoogleLogin
@@ -47,7 +46,6 @@ const Auth = () => {
                 />
             </GoogleOAuthProvider>
             </div>
-        </div>
     </div>
   )
 }

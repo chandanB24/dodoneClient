@@ -1,21 +1,31 @@
 import React, { useState } from 'react'
 import PostBody from './PostBody'
 import PostFooter from './PostFooter'
+import PostImageSelect from './PostImageSelect'
+import axios from 'axios'
+
+
 
 const PostBoxModal = () => {
 
   const [heading,setHeading] = useState(false)
-  
+  const [postTitle,setPostTitle] = useState(null);
+  const [postUrl,setPostUrl] = useState(null);
+  const [ytUrl,setYtUrl] = useState(null);
+  const [imageUrl,setImageUrl] = useState(null);
+  const [inputvalue,setInputvalue] = useState(null);
+  const timeStamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+  const pathArray = window.location.pathname.split('/');
+  const pageId = pathArray[pathArray.length-1];
+
+
+
 
   const toggleHeading = ()=>{
     setHeading(!heading)
   }
-
-// for input characters restriction
-
-  const [inputvalue,setInputvalue] = useState();
   
-
   const handleInputChange = (e)=>{
     const newValue = e.target.value;
 
@@ -24,9 +34,28 @@ const PostBoxModal = () => {
     }
   }
 
+  const submitPost = async (e) =>{
+      e.preventDefault()
+      const data  = {pid:pageId,postTitle,postBody:inputvalue,postUrl,ytUrl,timeStamp,imageUrl};
+      console.log(data)
 
+      if((postTitle || inputvalue) || (imageUrl || ytUrl)){
+      try{  
+      const res = await axios.post('http://localhost:8080/api/createPost',data);
+      if(res){
+        console.log(res);
+        window.location.reload();
+      }
+      }
+      catch(err){
+        console.log(err);
+      }
+    }
+  }
+ 
   return (
-    <div className="modal  fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style={{ backgroundColor: 'rgba(0, 0, 0, 0.8)'}}>
+    <>
+    <div className="modal fade" id="exampleModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1" style={{ backgroundColor: 'rgba(0, 0, 0, 0.8)'}}>
     <div className="modal-dialog modal-dialog-centered" >
       <div className="modal-content">
         <div className="modal-header">
@@ -34,14 +63,16 @@ const PostBoxModal = () => {
           <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div className="modal-body">
-          <PostBody visible={heading} inputValue={inputvalue} handleInputChange={handleInputChange} />
+          <PostBody visible={heading} inputValue={inputvalue} handleInputChange={handleInputChange} setPostTitle={setPostTitle}/>
         </div>
         <div className="modal-footer d-flex justify-content-between align-items-center">
-         <PostFooter toggle={toggleHeading}/>
+         <PostFooter toggle={toggleHeading} setPostUrl={setPostUrl} submitPost={submitPost}/>
         </div>
       </div>
     </div>
   </div>
+    <PostImageSelect setImageUrl={setImageUrl} setYtUrl={setYtUrl}/>
+  </>
   )
 }
 

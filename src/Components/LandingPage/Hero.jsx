@@ -1,23 +1,87 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import bgImg from '../../assets/bg.png'
+import axios from 'axios'
+import { useParams } from 'react-router-dom'
+import { RxExternalLink } from 'react-icons/rx'
+import ReactPlayer from 'react-player'
 
 const Hero = () => {
+  const {pageId} = useParams()
+  const [data,setData] = useState(null)
+  
+
+  const fetchHeroData = async () => {
+    try {
+      const res = await axios.get(`http://localhost:8080/api/getHero/${pageId}`);
+      const fetchCard = await axios.get(`http://localhost:8080/api/getHeroPost/${res.data[0].post_id}`);
+      setData(fetchCard.data);
+    } catch (error) {
+      // Handle errors here
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch data initially when the component mounts
+    fetchHeroData();
+
+    // Set up an interval to fetch data every, for example, 5 seconds (adjust as needed)
+    const intervalId = setInterval(() => {
+      fetchHeroData();
+    }, 1000); // Adjust the interval time as needed (in milliseconds)
+
+    // Cleanup the interval when the component unmounts to prevent memory leaks
+    return () => clearInterval(intervalId);
+  }, [pageId]);
+
+
+
+
+
+
+  const getTimeAgo = (timestamp) =>{
+    const now = new Date();
+    const postTime = new Date(timestamp);
+    const timediiference = now - postTime;
+    const minutesAgo = Math.floor(timediiference/(1000 * 60))
+    
+    if (minutesAgo < 60) {
+        return `${minutesAgo} minute${minutesAgo === 1 ? '' : 's'} ago`;
+    } else if (minutesAgo < 1440) {
+        const hoursAgo = Math.floor(minutesAgo / 60);
+        return `${hoursAgo} hour${hoursAgo === 1 ? '' : 's'} ago`;
+    } else {
+        const daysAgo = Math.floor(minutesAgo / 1440);
+        return `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`;
+    }
+  }
+
+
   return (
    <div className="card d-flex justify-content-center align-items-start shadow-lg mb-3" style={{padding:'20px',minHeight:'50vh',backgroundImage:`url(${bgImg})`,border:'none'}}>
-    <div className="card shadow-lg p-3 col-lg-5 col-sm-12" style={{background:"#ffffff",border:"none"}}>
-        <div className="card-text p-1 fw-bold mb-2" style={{color:"darkblue",fontSize:"18px"}}>
-            Recent Posts
+         {data&&(data.post_title || data.post_body || data.post_url ? 
+        <div className='card border-0 shadow-lg h-100'> 
+        {data.image_url?<img src={data.image_url} alt='img' className='card-img-top'/>:
+        <ReactPlayer url={data.yt_url} className='card-img-top' controls width='100%' height='100%'/>
+        }
+        <div className="card-body">
+            <h5 className="card-title fw-bolder" style={{fontFamily:'Poppins',fontWeight:'lighter 300',color:'#18181B'}}>{data.post_title}</h5>
+            <p className="card-text fw-light mb-2" style={{fontFamily:"Poppins",fontWeight:'Extralight 200',color:'#71717A'}}>{data.post_body}</p>
         </div>
-    <div className="card-body p-0">
-      <h4 className='card-title' style={{fontFamily:'Poppins',fontWeight:'lighter 300',color:'#18181B'}}>Coffee The Relaxing Mind</h4>
-      <p className='card-text ' style={{fontFamily:"Poppins",fontSize:"16px",fontWeight:'Extralight 200',color:'#71717A'}}>Indulging in a warm cup of coffee is like a soothing embrace for the mind, gently unraveling tension and infusing tranquility with every sip. Its rich aroma and comforting taste create a brief oasis of relaxation amidst the bustling rhythms </p>
+        <div className='card-footer border-top-0 bg-white m-0 p-2'>
+            <p className='card-text m-0 fw-medium' style={{color:'#A1A1AA'}}>{getTimeAgo(data.post_timestamp)}</p>
+            <div className='d-flex justify-content-start mt-1'>
+            <a className="btn btn-sm btn-secondary rounded-circle" href={data.post_url?data.post_url:'/'}><RxExternalLink color='white'/></a>
+            </div>
+        </div>
+    </div>:
+        <div className='card border-0 h-100'>
+        {data.image_url?<img src={data.image_url} alt="img" className='card-img h-100 w-100' style={{objectFit:'cover',overflow:'hidden'}}/>:
+        <ReactPlayer url={data.yt_url} className='card-img rounded-lg' controls width='100%' height='100%'/>
+        }
+        </div>
+        )}
     </div>
-    <hr />
-    <div className="card-footers">
-        <p className='fw-bold fs-6' style={{color:"#A1A1AA"}}>Posted 3min ago</p>
-    </div>
-    </div>
-</div>
   )
 }
 

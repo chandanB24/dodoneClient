@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import AllRoutes from './AllRoutes/AllRoutes';
 
 
+
 const App = () => {
   return (
     <div className='px-4 py-2' style={{backgroundColor:'#e3f2fd',minHeight:'100vh'}}>
@@ -19,4 +20,3 @@ const App = () => {
 
 export default App
 
-// #e3f2fd
