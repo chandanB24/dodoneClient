@@ -18,7 +18,6 @@ const Auth = () => {
         if(res)
         {
             localStorage.setItem('userData',JSON.stringify(res.data));
-            // console.log(res.data)
             push(`/dashboard/${res.data.uid}`);
             window.location.reload(false);
         }

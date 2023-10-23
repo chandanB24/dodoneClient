@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import img from '../../assets/profile.png'
 import {FaInstagram,FaFacebookF,FaYoutube} from 'react-icons/fa'
 import {TbWorld} from 'react-icons/tb'
 import { useParams } from 'react-router-dom'
@@ -8,6 +7,7 @@ import axios from 'axios'
 const Profile = () => {
 
   const [data,setData] = useState();
+  const [title,setTitle] = useState();
   const {pageId} = useParams();
 
     
@@ -22,7 +22,20 @@ const Profile = () => {
           console.log(error)
         }
       }
+
+      const fetchPageTitle = async () =>{
+        try {
+          const res = await axios.get(`http://localhost:8080//api/getPageTitle/${pageId}`);
+          if(res){
+            setTitle(res.data.page_title)
+          }
+        } catch (error) {
+          console.log(error)  
+        }
+      }
+
       fetchData();
+      fetchPageTitle();
   },[pageId])
 
 
@@ -31,10 +44,10 @@ const Profile = () => {
     <div className='sidebar rounded shadow-lg' style={{backgroundColor:"#f8f9fa",padding:'20px',minHeight:'50vh'}}>
     <h2 className='fw-bold text-center fs-4' style={{color:'darkblue'}}>Profile</h2>
     <div className='col mt-4 p-2 d-flex justify-content-center align-items-center'>
-       <img src={` http://localhost:8080/${data?.profile_image}`} alt='profile' className='rounded-circle object-fit-cover' style={{width:'50px'}}/>
+       <img src={` http://localhost:8080/${data?.profile_image}`} alt='profile' className='rounded-circle object-fit-cover' style={{width:'50px',height:'50px'}}/>
     </div>
     <div className='col text-center' style={{fontFamily:"Poppins",fontSize:"16px",fontWeight:'Extralight 200',color:'#71717A'}}>
-      <h5 className='fw-bold text-center'>ABC Events</h5><hr />
+      <h5 className='fw-bold text-center'>{title?title:null}</h5><hr />
       <div className='col text-start fs-6'>
          {data?data.profile_info:null}<br />
       </div>

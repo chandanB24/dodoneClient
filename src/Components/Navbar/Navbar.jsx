@@ -37,12 +37,12 @@ const Navbar = () => {
 
 
 // Find the selected page object based on the selectedPage value
-  const selectedPageObject = pageList ? pageList.find((item) => item.page_title === selectedPage) : null;
 
-  // Extract the pid if the selectedPageObject exists
-  const selectedPageId = selectedPageObject ? selectedPageObject.pid : (pageList && pageList.length > 0 ? pageList[0].pid : null);
+const selectedPageObject = Array.isArray(pageList) ? pageList.find((item) => item.page_title === selectedPage) : null;
 
-// Now you can use selectedPageId as needed
+// Extract the pid if the selectedPageObject exists
+const selectedPageId = selectedPageObject ? selectedPageObject.pid : (Array.isArray(pageList) && pageList.length > 0 ? pageList[0].pid : null);
+
 
 
 
@@ -89,8 +89,8 @@ const Navbar = () => {
         </button>
         <ul className="dropdown-menu text-dark">
         <li><Link className='dropdown-item' to={`/createProfile/${selectedPageId}`}>profile</Link></li>
-          <li className='dropdown-item'>settings</li>
-          <li className='dropdown-item' onClick={handleLogout}>logout</li>
+          <li><Link className='dropdown-item' to={`/settings/${selectedPageId}`}>settings</Link></li>
+          <li className='dropdown-item' onClick={handleLogout} style={{cursor:'pointer'}}>logout</li>
         </ul>
         </div>:null}
       </div>

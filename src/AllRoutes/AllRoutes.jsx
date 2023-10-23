@@ -6,6 +6,7 @@ import Dashboard from '../Components/Dashboard/Dashboard'
 import CreatePage from '../Components/PostBox/CreatePage'
 import EndUser from '../Components/EndUser/EndUser'
 import CreateProfile from '../Components/LandingPage/CreateProfile'
+import Settings from '../Components/LandingPage/Settings'
 
 
 
@@ -19,6 +20,7 @@ const AllRoutes = () => {
             <Route path='/post/:pageId' element={<LandingPage/>}></Route>
             <Route path='/createPage' element={<CreatePage/>}></Route>
             <Route path='/createProfile/:pageId' element={<CreateProfile/>}></Route>
+            <Route path='/settings/:pageId' element={<Settings/>}></Route>
             <Route path='/:pageName' element={<EndUser/>}></Route>
         </Routes>
    

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PostBody from './PostBody'
 import PostFooter from './PostFooter'
 import PostImageSelect from './PostImageSelect'
@@ -14,8 +14,9 @@ const PostBoxModal = () => {
   const [ytUrl,setYtUrl] = useState(null);
   const [imageUrl,setImageUrl] = useState(null);
   const [inputvalue,setInputvalue] = useState(null);
+  const [isScheduled, setIsScheduled] = useState(false);
+  const [startDate,setStartdate] = useState()
   const timeStamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
-
   const pathArray = window.location.pathname.split('/');
   const pageId = pathArray[pathArray.length-1];
 
@@ -52,6 +53,53 @@ const PostBoxModal = () => {
       }
     }
   }
+
+
+
+
+const schedulePost = async (scheduleDate) => {
+  setStartdate(scheduleDate)
+  const currentDate = new Date();
+  if (currentDate >= scheduleDate) {
+    if (!isScheduled) {
+      setIsScheduled(true);
+      const data  = {pid:pageId,postTitle,postBody:inputvalue,postUrl,ytUrl,timeStamp,imageUrl};
+      console.log(data)
+
+      if((postTitle || inputvalue) || (imageUrl || ytUrl)){
+      try{  
+      const res = await axios.post('http://localhost:8080/api/createPost',data);
+      if(res){
+        console.log(res);
+        window.location.reload();
+      }
+      }
+      catch(err){
+        console.log(err);
+      }
+    }
+    }
+  }
+}
+
+useEffect(() => {
+  if (isScheduled) {
+    
+    return;
+  }
+
+
+  const intervalId = setInterval(() => {
+    schedulePost(startDate);
+  }, 2000);
+
+  return () => {
+    clearInterval(intervalId); 
+  };
+}, [isScheduled, startDate]);
+
+
+
  
   return (
     <>
@@ -66,7 +114,7 @@ const PostBoxModal = () => {
           <PostBody visible={heading} inputValue={inputvalue} handleInputChange={handleInputChange} setPostTitle={setPostTitle}/>
         </div>
         <div className="modal-footer d-flex justify-content-between align-items-center">
-         <PostFooter toggle={toggleHeading} setPostUrl={setPostUrl} submitPost={submitPost}/>
+         <PostFooter toggle={toggleHeading} setPostUrl={setPostUrl} submitPost={submitPost} schedulePost={schedulePost}/>
         </div>
       </div>
     </div>

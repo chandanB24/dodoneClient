@@ -4,17 +4,16 @@ import 'react-datepicker/dist/react-datepicker.css'
 import {GrMoreVertical} from 'react-icons/gr'
 import {FaHeading,FaLink,FaCamera} from 'react-icons/fa'
 import {PiTimerFill} from 'react-icons/pi'
-import {GiTimeBomb} from 'react-icons/gi'
 
-const PostFooter = ({toggle,setYtUrl,setPostUrl,submitPost}) => {
+
+const PostFooter = ({toggle,setPostUrl,submitPost,schedulePost}) => {
 
   const [more,showMore] = useState(false)
   const [media,setMedia] = useState(false)
   const [schedule,setSecdule] = useState(false)
-  const [disappear,setDisappear] = useState(false)
   const [startDate, setStartDate] = useState(new Date());
 
-//toggle functions of all icons
+
 
   const handleMore = ()=>{
     showMore(!more)
@@ -31,12 +30,7 @@ const PostFooter = ({toggle,setYtUrl,setPostUrl,submitPost}) => {
     setSecdule(!schedule)
   }
 
-  const handleDisappear = ()=>{
-    setDisappear(!disappear)
-  }  
-  
-
-
+   
 
   return (
     <>   
@@ -48,7 +42,7 @@ const PostFooter = ({toggle,setYtUrl,setPostUrl,submitPost}) => {
         <button className='btn btn-sm border-0' onClick={toggle}><FaHeading/></button>
         <button className='btn btn-sm border-0' onClick={handleMedia}><FaLink/></button>
         <button className='btn btn-sm border-0' onClick={handleSchedule}><PiTimerFill/></button>
-        <button className='btn btn-sm border-0' onClick={handleDisappear}><GiTimeBomb/></button>
+        
         </>
       }
 
@@ -63,27 +57,17 @@ const PostFooter = ({toggle,setYtUrl,setPostUrl,submitPost}) => {
     <div className='schedule'>
       <hr />
       <p className='fs-6 fw-medium mt-1'>Schedule The Post</p>
+      <div className="d-flex justify-content-between">
     <DatePicker
-         
           timeIntervals={15}
           dateFormat="MMMM d, yyyy h:mm aa"
           className='p-1 text-black'
+          showTimeSelect
           selected={startDate} onChange={(date) => setStartDate(date)}
         />
-    </div>
-    }
-    {disappear&&
-        <div className='schedule'>
-          <hr />
-          <p className='fs-6 fw-medium mt-1'>Disappear in</p>
-        <DatePicker
-              // selected={scheduleDate}
-              showTimeSelect
-              timeIntervals={15}
-              dateFormat="MMMM d, yyyy h:mm aa"
-              className='p-1 text-black'
-            />
+        <button className='btn btn-primary btn-sm' onClick={()=>schedulePost(startDate)} data-bs-dismiss="modal">schedule</button>
         </div>
+    </div>
     }
 
     </div>

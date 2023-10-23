@@ -1,12 +1,27 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Hero from './Hero'
 import Profile from './Profile'
 import PostSection from './PostSection'
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
 
 const LandingPage = () => {
     
-    const hero = true
-    const profile = true
+   const [hero,setHero] = useState(false);
+   const [profile,setProfile] = useState(false);
+   const {pageId} = useParams()
+
+  useEffect(()=>{
+      const fetchData = async ()=>{
+        const res = await axios.get(`http://localhost:8080/api/getPageSettings/${pageId}`)
+        if(res.data){
+            setHero(res.data.hero === '1')
+            setProfile(res.data.profile === '1')
+        }
+      }
+      fetchData();    
+  },[pageId])
+
 
   return (
     <div className='cotainer-fluid py-3'>
